@@ -1,0 +1,17 @@
+{
+  "name": "com.mfragger.serializeable-dictionary",
+  "version" : "1.0.5",
+  "license": "LICENSE",
+  "licensesUrl": "https://github.com/mfragger/Serializeable-Dictionary/blob/release/LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mfragger/Serializeable-Dictionary"
+  },
+  "keywords": [
+    "dictionary",
+    "serializeable"
+  ],
+  "displayName": "Serializeable Dictionary",
+  "unity": "2020.3",
+  "description": "A Serializeable Dictionary"
+}

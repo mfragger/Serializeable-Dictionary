@@ -1,0 +1,3 @@
+[submodule "generic-serializable-dictionary"]
+	path = generic-serializable-dictionary
+	url = https://github.com/upscalebaby/generic-serializable-dictionary.git

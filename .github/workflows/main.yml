@@ -1,0 +1,55 @@
+name: make-package
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with: 
+          submodules: recursive
+
+      - name: move generic-dictionary-files
+        run: |
+          mv generic-serializable-dictionary/Assets/Scripts/GenericDictionary.cs Runtime/GenericDictionary.cs
+          mv generic-serializable-dictionary/Assets/Scripts/GenericDictionary.cs.meta Runtime/GenericDictionary.cs.meta
+          mv generic-serializable-dictionary/Assets/Editor/GenericDictionaryPropertyDrawer.cs Editor/GenericDictionaryPropertyDrawer.cs
+          mv generic-serializable-dictionary/Assets/Editor/GenericDictionaryPropertyDrawer.cs.meta Editor/GenericDictionaryPropertyDrawer.cs.meta
+          
+      - name: Add License Text
+        run: |
+          sed -i '1s;^;*/\n;' Runtime/GenericDictionary.cs
+          sed -i -e '1 {r generic-serializable-dictionary/License.md' -e 'N;}' Runtime/GenericDictionary.cs
+          sed -i '1s;^;/*\n\r;' Runtime/GenericDictionary.cs
+          sed -i '1s;^;*/\n;' Editor/GenericDictionaryPropertyDrawer.cs
+          sed -i -e '1 {r generic-serializable-dictionary/License.md' -e 'N;}' Editor/GenericDictionaryPropertyDrawer.cs
+          sed -i '1s;^;/*\n\r;' Editor/GenericDictionaryPropertyDrawer.cs
+          
+      - name: Delete submodules
+        run: |
+          rm -r generic-serializable-dictionary/ generic-serializable-dictionary.meta .gitmodules
+      
+      - name: Read package.json
+        uses: nyaa8/package-version@v1
+        with:
+          path: 'package.json' # Optional
+          follow-symlinks: 'false' # Optional
+      
+      - name: Commit files
+        run: |
+          git config --local user.email "githubactions@action.github.com" 
+          git config --local user.name "github-action"
+          git add .
+          git commit -m "${{ env.PACKAGE_VERSION }}"
+          git tag ${{ env.PACKAGE_VERSION }}
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          force: true
+          tags: true
